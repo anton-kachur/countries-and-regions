@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Страны и регионы — пошаговая игра</title>
+  <title>Countries and regions</title>
   <style>
     :root {
       --bg: #f3f3f3;
@@ -384,7 +384,7 @@
   <div class="app">
     <div class="map-wrap">
       <div class="map" id="map">
-        <img id="mapBg" class="map-bg" alt="Карта" />
+        <img id="mapBg" class="map-bg" alt="Map" />
         <svg class="borders" viewBox="0 0 540 660" aria-hidden="true" id="mapSvg">
           <g id="regionsLayer" class="regions-layer"></g>
           <g id="boundariesLayer"></g>
@@ -393,35 +393,35 @@
       </div>
     </div>
     <div class="panel">
-      <h1>Страны и регионы</h1>
+      <h1>Countries and regions</h1>
       <p class="muted">by @vennerkurh 2026</p>
 
       <div class="status">
-        <p><strong>Текущий ход:</strong> <span id="turnText"></span></p>
-        <p><strong>Режим:</strong> <span id="modeText"></span></p>
-        <p><strong>Статус:</strong> <span id="warText"></span></p>
+        <p><strong>Current move:</strong> <span id="turnText"></span></p>
+        <p><strong>Mode:</strong> <span id="modeText"></span></p>
+        <p><strong>Status:</strong> <span id="warText"></span></p>
       </div>
 
       <div class="controls">
-        <button id="moveModeBtn" class="btn-secondary">Режим: Перемещение</button>
-        <button id="attackModeBtn" class="btn-danger">Режим: Атака</button>
-        <button id="truceBtn" class="btn-success">Заключить перемирие</button>
-        <button id="warBtn" class="btn-danger">Объявить войну</button>
+        <button id="moveModeBtn" class="btn-secondary">Movement mode</button>
+        <button id="attackModeBtn" class="btn-danger">Attack mode</button>
+        <button id="truceBtn" class="btn-success">Declare a truce</button>
+        <button id="warBtn" class="btn-danger">Declare war</button>
       </div>
 
-      <button id="endTurnBtn" class="btn-primary">Закончить ход</button>
-      <button id="restartBtn" class="btn-secondary">Перезапуск игры</button>
+      <button id="endTurnBtn" class="btn-primary">Proceed</button>
+      <button id="restartBtn" class="btn-secondary">Restart game</button>
 
       <div class="status">
-        <p><strong>Игровые карты</strong></p>
+        <p><strong>Maps</strong></p>
         <div class="controls">
           <select id="mapSelect" style="padding:10px;border-radius:8px;border:1px solid #d1d5db;">
             <option value="default">2 countries</option>
           </select>
-          <button id="loadMapBtn" class="btn-secondary">Загрузить карту</button>
+          <button id="loadMapBtn" class="btn-secondary">Load map</button>
         </div>
         <div class="zoom-row">
-          <label for="zoomRange"><strong>Масштаб:</strong></label>
+          <label for="zoomRange"><strong>Scale:</strong></label>
           <input id="zoomRange" type="range" min="70" max="170" step="5" value="100" />
           <span id="zoomText">100%</span>
         </div>
@@ -431,14 +431,14 @@
   </div>
   <div id="passOverlay" class="pass-overlay" role="dialog" aria-modal="true">
     <div class="pass-card">
-      <h2 id="passTitle">Передайте ход</h2>
-      <p id="passText">Передайте устройство следующему игроку.</p>
-      <button id="startTurnBtn" class="btn-primary">Начать ход</button>
+      <h2 id="passTitle">Pass the turn</h2>
+      <p id="passText">Pass the device to the next player.</p>
+      <button id="startTurnBtn" class="btn-primary">Start move</button>
     </div>
   </div>
   <div id="unitsOverlay" class="units-overlay" role="dialog" aria-modal="true">
     <div class="units-card">
-      <h3 id="unitsPromptTitle">Введите число</h3>
+      <h3 id="unitsPromptTitle">Enter number</h3>
       <p id="unitsPromptMeta" class="units-meta"></p>
       <div id="unitsPromptDisplay" class="units-display"></div>
       <div class="units-keypad">
@@ -456,7 +456,7 @@
         <button id="unitsClearBtn">C</button>
       </div>
       <div class="units-actions">
-        <button id="unitsCancelBtn" class="cancel-btn">Отмена</button>
+        <button id="unitsCancelBtn" class="cancel-btn">Cancel</button>
         <button id="unitsOkBtn" class="ok-btn">OK</button>
       </div>
     </div>
@@ -464,17 +464,17 @@
 
   <script>
     const COUNTRY_LIBRARY = {
-      orange: { id: "orange", name: "Оранжевая страна", color: "#f97316" },
-      green: { id: "green", name: "Зеленая страна", color: "#16a34a" },
-      blue: { id: "blue", name: "Синяя страна", color: "#3b82f6" },
-      cyan1: { id: "cyan1", name: "Голубая уния I", color: "#38bdf8" },
-      cyan2: { id: "cyan2", name: "Голубая уния II", color: "#38bdf8" },
-      cyan3: { id: "cyan3", name: "Голубая уния III", color: "#38bdf8" },
-      black: { id: "black", name: "Черная страна", color: "#111827" },
-      darkgray: { id: "darkgray", name: "Темно-серая страна", color: "#4b5563" },
-      yellow: { id: "yellow", name: "Желтая страна", color: "#facc15" },
-      purple: { id: "purple", name: "Фиолетовая страна", color: "#a855f7" },
-      red: { id: "red", name: "Красная страна", color: "#ef4444" }
+      orange: { id: "orange", name: "Orange country", color: "#f97316" },
+      green: { id: "green", name: "Green country", color: "#16a34a" },
+      blue: { id: "blue", name: "Blue country", color: "#3b82f6" },
+      cyan1: { id: "cyan1", name: "Cyan union I", color: "#38bdf8" },
+      cyan2: { id: "cyan2", name: "Cyan union II", color: "#38bdf8" },
+      cyan3: { id: "cyan3", name: "Cyan union III", color: "#38bdf8" },
+      black: { id: "black", name: "Black country", color: "#111827" },
+      darkgray: { id: "darkgray", name: "Dark gray country", color: "#4b5563" },
+      yellow: { id: "yellow", name: "Yellow country", color: "#facc15" },
+      purple: { id: "purple", name: "Purple country", color: "#a855f7" },
+      red: { id: "red", name: "Red country", color: "#ef4444" }
     };
     const MAP_OUTLINE = [
       [20, 20], [520, 20], [520, 640], [20, 640]
@@ -3484,7 +3484,7 @@
       return new Promise((resolve) => {
         let currentValue = "";
         unitsPromptTitleEl.textContent = question;
-        unitsPromptMetaEl.textContent = `Введите число от 1 до ${maxValue}`;
+        unitsPromptMetaEl.textContent = `Enter number from 1 to ${maxValue}`;
         unitsPromptDisplayEl.textContent = currentValue;
         unitsOverlayEl.classList.add("show");
 
@@ -3688,8 +3688,8 @@
 
     function renderStatus() {
       turnText.textContent = getCountry(currentPlayer).name;
-      modeText.textContent = mode === "move" ? "Перемещение" : "Атака";
-      warText.textContent = atWar ? "Война" : "Перемирие";
+      modeText.textContent = mode === "move" ? "Movement" : "Attack";
+      warText.textContent = atWar ? "War" : "Peace";
     }
 
     function loadMap(mapId) {
@@ -3740,8 +3740,8 @@
       logEl.innerHTML = "";
       mapBgEl.style.display = "none";
       mapBgEl.style.opacity = "0";
-      addLog(`Загружена карта: ${mapDef.name}.`);
-      addLog("Игра началась. Выберите режим, затем регион.");
+      addLog(`Map loaded: ${mapDef.name}.`);
+      addLog("Game started. Choose mode then a region.");
       render();
     }
 
@@ -3857,79 +3857,79 @@
         if (aliveAllianceIds.size === 1) {
           const allianceId = [...aliveAllianceIds][0];
           winner = allianceId;
-          addLog(`Победа союза ${allianceId}! Все страны соперников устранены.`);
-          alert(`Победил союз ${allianceId}!`);
+          addLog(`Union ${allianceId} won! All rival countries have been eliminated.`);
+          alert(`Union ${allianceId} won!`);
           return;
         }
       }
       const owners = new Set(regions.map((r) => r.owner));
       if (owners.size === 1) {
         winner = [...owners][0];
-        addLog(`Победа: ${getCountry(winner).name}! Все регионы захвачены.`);
-        alert(`Победила ${getCountry(winner).name}!`);
+        addLog(`Victory: ${getCountry(winner).name}! All regions have been captured.`);
+        alert(`${getCountry(winner).name} won!`);
       }
     }
 
     async function doMove(from, to) {
       if (from.owner !== currentPlayer) return;
       if (!areAllies(from.owner, to.owner)) {
-        addLog("Перемещать войска можно только в регион своей страны или союзника.");
+        addLog("You can only move troops to a region in your own country or an ally's country.");
         return;
       }
       if (from.id === to.id) return;
       if (!neighbors[from.id]?.includes(to.id)) {
-        addLog("Перемещение возможно только в соседний регион.");
+        addLog("You can only move to an adjacent region.");
         return;
       }
       if (blockedMoveSources.has(from.id)) {
-        addLog("Из этого региона в текущем ходу действовать нельзя (он уже был получателем войск).");
+        addLog("You cannot move from this region on this turn (it has already received troops).");
         return;
       }
       if (from.army <= 1) {
-        addLog("Нельзя переместить армию: в регионе только 1 юнит.");
+        addLog("You cannot move the army: there is only 1 unit in the region.");
         return;
       }
       const maxMove = from.army - 1;
-      const m = await showUnitsPrompt("Сколько юнитов переместить?", maxMove);
+      const m = await showUnitsPrompt("How many units should be moved?", maxMove);
       if (m == null) return;
       if (!Number.isInteger(m) || m < 1 || m > maxMove) {
-        addLog("Некорректное число перемещения.");
+        addLog("Invalid movement number.");
         return;
       }
 
       from.army -= m;
       to.army += m;
       blockedMoveSources.add(to.id);
-      addLog(`${getCountry(currentPlayer).name}: перемещение ${m} юнитов из ${from.id} в ${to.id}.`);
+      addLog(`${getCountry(currentPlayer).name}: moving ${m} units from ${from.id} to ${to.id}.`);
     }
 
     async function doAttack(from, to) {
       if (!atWar) {
-        addLog("Атака запрещена: действует перемирие.");
+        addLog("Attacks are prohibited: a truce is in effect.");
         return;
       }
       if (from.owner !== currentPlayer || to.owner === currentPlayer) return;
       if (areAllies(from.owner, to.owner)) {
-        addLog("Нельзя атаковать регион союзника.");
+        addLog("You cannot attack an ally's region.");
         return;
       }
       if (!neighbors[from.id]?.includes(to.id)) {
-        addLog("Атака возможна только в соседний вражеский регион.");
+        addLog("An attack can only be launched against an adjacent enemy region.");
         return;
       }
       if (blockedMoveSources.has(from.id)) {
-        addLog("Из этого региона в текущем ходу атаковать нельзя (он уже получил войска).");
+        addLog("You cannot attack from this region this turn (it has already received troops).");
         return;
       }
       if (from.army <= 1) {
-        addLog("Атака невозможна: в атакующем регионе только 1 юнит.");
+        addLog("An attack is not possible: there is only 1 unit in the attacking region.");
         return;
       }
       const maxAttack = from.army - 1;
-      const attackUnits = await showUnitsPrompt("Сколько юнитов отправить в атаку?", maxAttack);
+      const attackUnits = await showUnitsPrompt("How many units should I send into battle?", maxAttack);
       if (attackUnits == null) return;
       if (!Number.isInteger(attackUnits) || attackUnits < 1 || attackUnits > maxAttack) {
-        addLog("Некорректное число атакующих юнитов.");
+        addLog("Invalid number of attacking units.");
         return;
       }
 
@@ -3941,13 +3941,13 @@
         to.army = survivors;
         blockedMoveSources.add(to.id);
         addLog(
-          `${getCountry(currentPlayer).name} захватывает ${to.id}. В атаку отправлено ${attackUnits}, выжило ${survivors}.`
+          `${getCountry(currentPlayer).name} captures ${to.id}. Sent into battle ${attackUnits}, survived ${survivors}.`
         );
       } else {
         from.army -= attackUnits;
         to.army -= attackUnits;
         addLog(
-          `${getCountry(currentPlayer).name} атакует ${to.id} из ${from.id}: обе стороны потеряли ${attackUnits}.`
+          `${getCountry(currentPlayer).name} attacks ${to.id} from ${from.id}: both sides lost ${attackUnits}.`
         );
       }
     }
@@ -3955,7 +3955,7 @@
     function placePendingReinforcement(targetRegion) {
       targetRegion.army += pendingReinforcement.units;
       addLog(
-        `${getCountry(currentPlayer).name}: подкрепление ${pendingReinforcement.units} юнитов добавлено в ${targetRegion.id}.`
+        `${getCountry(currentPlayer).name}: reinforcement of ${pendingReinforcement.units} units added to ${targetRegion.id}.`
       );
       pendingReinforcement = null;
       reinforcementTokenEl.style.display = "none";
@@ -3971,7 +3971,7 @@
       const clicked = getRegion(id);
       if (pendingReinforcement) {
         if (clicked.owner !== currentPlayer) {
-          addLog("Подкрепление можно разместить только в ваш регион.");
+          addLog("Reinforcements can only be deployed to your region.");
           return;
         }
         placePendingReinforcement(clicked);
@@ -3979,7 +3979,7 @@
       }
       if (!selectedRegionId) {
         if (clicked.owner !== currentPlayer) {
-          addLog("Сначала выберите регион своей страны.");
+          addLog("First, select your country's region.");
           return;
         }
         selectedRegionId = id;
@@ -4006,8 +4006,8 @@
 
     function showPassOverlay() {
       isPassPhase = true;
-      passTitleEl.textContent = "Передайте ход";
-      passTextEl.textContent = `Теперь ходит: ${getCountry(currentPlayer).name}. Передайте устройство игроку этой страны.`;
+      passTitleEl.textContent = "Pass the move";
+      passTextEl.textContent = `Now moves: ${getCountry(currentPlayer).name}. Please hand the device to the player from that country.`;
       passOverlayEl.classList.add("show");
     }
 
@@ -4029,14 +4029,14 @@
       reinforcementTokenEl.style.display = "flex";
       reinforcementTokenEl.style.left = "270px";
       reinforcementTokenEl.style.top = "330px";
-      addLog(`${getCountry(currentPlayer).name}: перетащите +${reinforcements} в один из своих регионов.`);
+      addLog(`${getCountry(currentPlayer).name}: drag +${reinforcements} to one of your regions.`);
     }
 
     document.getElementById("moveModeBtn").addEventListener("click", () => {
       if (isPassPhase || pendingReinforcement) return;
       mode = "move";
       selectedRegionId = null;
-      addLog("Выбран режим перемещения.");
+      addLog("The movement mode has been selected.");
       render();
     });
 
@@ -4044,21 +4044,21 @@
       if (isPassPhase || pendingReinforcement) return;
       mode = "attack";
       selectedRegionId = null;
-      addLog("Выбран режим атаки.");
+      addLog("Attack mode has been selected.");
       render();
     });
 
     document.getElementById("truceBtn").addEventListener("click", () => {
       if (isPassPhase || pendingReinforcement) return;
       atWar = false;
-      addLog(`${getCountry(currentPlayer).name} заключила перемирие.`);
+      addLog(`${getCountry(currentPlayer).name} concluded a truce.`);
       render();
     });
 
     document.getElementById("warBtn").addEventListener("click", () => {
       if (isPassPhase || pendingReinforcement) return;
       atWar = true;
-      addLog(`${getCountry(currentPlayer).name} объявила войну.`);
+      addLog(`${getCountry(currentPlayer).name} declared war.`);
       render();
     });
 
@@ -4101,12 +4101,12 @@
       reinforcementTokenEl.classList.remove("dragging");
       const regionId = getRegionIdAtClientPoint(event.clientX, event.clientY);
       if (!regionId) {
-        addLog("Подкрепление не размещено: бросьте маркер в регион вашей страны.");
+        addLog("No reinforcements have been deployed: place a marker in your country's region.");
         return;
       }
       const target = getRegion(regionId);
       if (!target || target.owner !== currentPlayer) {
-        addLog("Подкрепление можно разместить только в ваш регион.");
+        addLog("Reinforcements can only be deployed to your region.");
         return;
       }
       placePendingReinforcement(target);
