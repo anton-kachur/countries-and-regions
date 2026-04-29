@@ -1,9 +1,14 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Countries and regions</title>
+  <link
+    rel="icon"
+    type="image/svg+xml"
+    href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%232563eb'/%3E%3Ccircle cx='32' cy='32' r='18' fill='none' stroke='%23ffffff' stroke-width='3'/%3E%3Cpath d='M16 32h32' stroke='%23ffffff' stroke-width='2' opacity='0.75'/%3E%3Cpath d='M32 14c7 8 7 28 0 36-7-8-7-28 0-36Z' fill='%23ffffff' opacity='0.22'/%3E%3Cpath d='M32 21l2.1 6.3h6.7l-5.4 3.9 2.1 6.3-5.5-3.9-5.5 3.9 2.1-6.3-5.4-3.9h6.7L32 21Z' fill='%23ffffff' opacity='0.85'/%3E%3C/svg%3E"
+  />
   <style>
     :root {
       --bg: #f3f3f3;
@@ -192,6 +197,41 @@
       cursor: grabbing;
     }
 
+    .factory-icon {
+      position: absolute;
+      width: 40px;
+      height: 40px;
+      transform: translate(-50%, -50%);
+      pointer-events: none;
+      z-index: 6;
+      color: #374151;
+    }
+
+    .factory-gear {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 28px;
+      opacity: 0.9;
+      line-height: 1;
+      z-index: 0;
+    }
+
+    .factory-count {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-size: 18px;
+      font-weight: 900;
+      color: #111827;
+      z-index: 5;
+      line-height: 1;
+      text-shadow: 0 1px 0 rgba(255, 255, 255, 0.9), 0 0 6px rgba(255, 255, 255, 0.55);
+    }
+
     .panel {
       padding: 14px;
       display: flex;
@@ -201,7 +241,26 @@
 
     h1 {
       margin: 0;
-      font-size: 20px;
+      font-size: clamp(18px, 3.5vw, 26px);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .game-logo {
+      width: 34px;
+      height: 34px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--accent);
+      flex: 0 0 auto;
+    }
+
+    .game-logo svg {
+      width: 34px;
+      height: 34px;
+      display: block;
     }
 
     .muted {
@@ -240,6 +299,8 @@
       background: var(--accent);
       color: #fff;
     }
+
+    
 
     .btn-secondary {
       background: #e5e7eb;
@@ -409,6 +470,19 @@
         <button id="warBtn" class="btn-danger">Declare war</button>
       </div>
 
+      <div class="controls">
+        <button id="formAllianceBtn" class="btn-secondary">Form alliance</button>
+        <button id="breakAllianceBtn" class="btn-secondary">Break alliance</button>
+      </div>
+
+      <div class="controls">
+        <button id="factoriesToggleBtn" class="btn-secondary">Factories: off</button>
+        <button id="buildFactoryBtn" class="btn-secondary" disabled>Build factories</button>
+        <button id="demolishFactoryBtn" class="btn-secondary" disabled style="grid-column: 1 / -1;">
+          Demolish factories
+        </button>
+      </div>
+
       <button id="endTurnBtn" class="btn-primary">Proceed</button>
       <button id="restartBtn" class="btn-secondary">Restart game</button>
 
@@ -470,6 +544,7 @@
       cyan1: { id: "cyan1", name: "Cyan union I", color: "#38bdf8" },
       cyan2: { id: "cyan2", name: "Cyan union II", color: "#38bdf8" },
       cyan3: { id: "cyan3", name: "Cyan union III", color: "#38bdf8" },
+      cyan: { id: "cyan", name: "Cyan country", color: "#38bdf8" },
       black: { id: "black", name: "Black country", color: "#111827" },
       darkgray: { id: "darkgray", name: "Dark gray country", color: "#4b5563" },
       yellow: { id: "yellow", name: "Yellow country", color: "#facc15" },
@@ -3352,10 +3427,45 @@
       return alliances;
     }
 
+    const RANDOM_CYAN_COUNTRY_ID = "cyan";
+    const RANDOM_CYAN_COUNTRY = { id: "cyan", name: "Cyan", color: "#38bdf8" };
+    const RANDOM_COLOR_PALETTE = [
+      { id: "red", name: "Red", color: "#ef4444" },
+      { id: "orange", name: "Orange", color: "#f97316" },
+      { id: "yellow", name: "Yellow", color: "#facc15" },
+      { id: "lime", name: "Lime", color: "#84cc16" },
+      { id: "green", name: "Green", color: "#16a34a" },
+      { id: "teal", name: "Teal", color: "#14b8a6" },
+      { id: "blue", name: "Blue", color: "#3b82f6" },
+      { id: "indigo", name: "Indigo", color: "#6366f1" },
+      { id: "purple", name: "Purple", color: "#a855f7" },
+      { id: "pink", name: "Pink", color: "#ec4899" },
+      { id: "brown", name: "Brown", color: "#a16207" },
+      { id: "gold", name: "Gold", color: "#f59e0b" },
+      { id: "maroon", name: "Maroon", color: "#7f1d1d" },
+      { id: "gray", name: "Gray", color: "#6b7280" },
+      { id: "darkgray", name: "Dark gray", color: "#4b5563" },
+      { id: "black", name: "Black", color: "#111827" }
+    ];
+
+    function generateRandomCountries() {
+      const othersPool = RANDOM_COLOR_PALETTE;
+      const maxOther = Math.min(9, othersPool.length); // total countries <= 10 incl. cyan
+      const totalCountries = randomInt(4, maxOther + 1);
+      const otherCount = totalCountries - 1;
+      const pickedOthers = shuffle(othersPool).slice(0, otherCount);
+
+      const selected = [
+        RANDOM_CYAN_COUNTRY,
+        ...pickedOthers.map((c) => ({ id: c.id, name: c.name, color: c.color }))
+      ];
+      const countryOrder = shuffle(selected.map((c) => c.id));
+      const countries = Object.fromEntries(selected.map((c) => [c.id, c]));
+      return { countryOrder, countries };
+    }
+
     function generateRandomMapDefinition(mapId, mapName, withUnions) {
-      const allCountryIds = Object.keys(COUNTRY_LIBRARY);
-      const playerCount = randomInt(2, Math.min(10, allCountryIds.length));
-      const selectedCountryIds = shuffle(allCountryIds).slice(0, playerCount);
+      const { countryOrder: selectedCountryIds, countries } = generateRandomCountries();
       const regionData = [];
       const takenPoints = [];
       const minDistance = 38;
@@ -3377,11 +3487,15 @@
       }
 
       for (const countryId of selectedCountryIds) {
-        const regionsForCountry = randomInt(2, 7);
-        const capitalIndex = randomInt(0, regionsForCountry - 1);
+        const isCyan = countryId === RANDOM_CYAN_COUNTRY_ID;
+        const capitalCount = isCyan ? 3 : 1;
+        const regionsForCountry = randomInt(isCyan ? 3 : 2, 7);
+        const capitalIndices = new Set(
+          shuffle(Array.from({ length: regionsForCountry }, (_, i) => i)).slice(0, capitalCount)
+        );
         for (let i = 0; i < regionsForCountry; i += 1) {
           const { x, y } = pickPoint();
-          const isCapital = i === capitalIndex;
+          const isCapital = capitalIndices.has(i);
           regionData.push({
             id: `r_${regionCounter}`,
             owner: countryId,
@@ -3399,7 +3513,7 @@
         id: mapId,
         name: mapName,
         countryOrder: selectedCountryIds,
-        countries: Object.fromEntries(selectedCountryIds.map((id) => [id, COUNTRY_LIBRARY[id]])),
+        countries,
         alliances,
         regionData,
         outline: MAP_OUTLINE,
@@ -3411,7 +3525,9 @@
     GAME_MAPS.random_no_unions = generateRandomMapDefinition("random_no_unions", "random (no unions)", false);
 
     for (const mapDef of Object.values(GAME_MAPS)) {
-      mapDef.countries = Object.fromEntries(mapDef.countryOrder.map((countryId) => [countryId, COUNTRY_LIBRARY[countryId]]));
+      if (!mapDef.countries) {
+        mapDef.countries = Object.fromEntries(mapDef.countryOrder.map((countryId) => [countryId, COUNTRY_LIBRARY[countryId]]));
+      }
       if (!mapDef.neighbors || !mapDef.regionVertices || !mapDef.regionShapes) {
         const auto = buildVoronoiGeometry(mapDef.regionData, mapDef.outline, mapDef.minCellArea || 300);
         mapDef.neighbors = auto.neighbors;
@@ -3432,7 +3548,11 @@
     let winner = null;
     let isPassPhase = false;
     const playersWhoFinishedAtLeastOneTurn = new Set();
+    const turnsCompletedByCountry = new Map();
     let blockedMoveSources = new Set();
+    let pendingDiplomacyAction = null; // "form" | "break"
+    let pendingFactoryAction = null; // "build" | "demolish"
+    let factoriesEnabled = false;
 
     const mapEl = document.getElementById("map");
     const mapBgEl = document.getElementById("mapBg");
@@ -3448,6 +3568,11 @@
     const boundariesLayerEl = document.getElementById("boundariesLayer");
     const reinforcementTokenEl = document.getElementById("reinforcementToken");
     const mapSelectEl = document.getElementById("mapSelect");
+    const formAllianceBtn = document.getElementById("formAllianceBtn");
+    const breakAllianceBtn = document.getElementById("breakAllianceBtn");
+    const factoriesToggleBtn = document.getElementById("factoriesToggleBtn");
+    const buildFactoryBtn = document.getElementById("buildFactoryBtn");
+    const demolishFactoryBtn = document.getElementById("demolishFactoryBtn");
     const zoomRangeEl = document.getElementById("zoomRange");
     const zoomTextEl = document.getElementById("zoomText");
     const unitsOverlayEl = document.getElementById("unitsOverlay");
@@ -3580,6 +3705,58 @@
       return Boolean(a && b && a === b);
     }
 
+    function generateNextAllianceId() {
+      let i = 1;
+      // Keep IDs deterministic-looking: U1, U2, ...
+      while (activeAlliances && activeAlliances[`U${i}`]) i += 1;
+      return `U${i}`;
+    }
+
+    function formAlliance(countryA, countryB) {
+      if (countryA === countryB) return;
+      if (!activeAlliances) activeAlliances = {};
+
+      const aId = getAllianceOf(countryA);
+      const bId = getAllianceOf(countryB);
+      if (aId && aId === bId) return; // already in the same alliance
+
+      if (!aId && !bId) {
+        const newId = generateNextAllianceId();
+        activeAlliances[newId] = [countryA, countryB];
+        return;
+      }
+
+      if (aId && !bId) {
+        if (!activeAlliances[aId].includes(countryB)) activeAlliances[aId].push(countryB);
+        return;
+      }
+
+      if (!aId && bId) {
+        if (!activeAlliances[bId].includes(countryA)) activeAlliances[bId].push(countryA);
+        return;
+      }
+
+      // Merge two alliances into one.
+      if (aId && bId && aId !== bId) {
+        const merged = Array.from(new Set([...(activeAlliances[aId] || []), ...(activeAlliances[bId] || [])]));
+        delete activeAlliances[bId];
+        activeAlliances[aId] = merged;
+      }
+    }
+
+    function breakAlliance(countryA, countryB) {
+      if (countryA === countryB) return;
+      if (!activeAlliances) return;
+
+      const aId = getAllianceOf(countryA);
+      const bId = getAllianceOf(countryB);
+      if (!aId || !bId || aId !== bId) return; // not allied
+
+      // Remove only the target member from the alliance.
+      activeAlliances[aId] = (activeAlliances[aId] || []).filter((c) => c !== countryB);
+      if (activeAlliances[aId].length < 2) delete activeAlliances[aId];
+    }
+
     function switchPlayer() {
       const alive = getAlivePlayers();
       if (!alive.size) return;
@@ -3692,6 +3869,55 @@
       warText.textContent = atWar ? "War" : "Peace";
     }
 
+    function clearFactoriesOnCurrentMap() {
+      for (const region of regions) region.factories = 0;
+    }
+
+    function populateRandomFactoriesOnCurrentMap() {
+      const regionById = new Map(regions.map((r) => [r.id, r]));
+      const regionsByOwner = new Map();
+      for (const region of regions) {
+        if (!regionsByOwner.has(region.owner)) regionsByOwner.set(region.owner, []);
+        regionsByOwner.get(region.owner).push(region);
+      }
+
+      clearFactoriesOnCurrentMap();
+
+      const owners = [...regionsByOwner.keys()];
+      if (!owners.length) return;
+
+      // Ensure factories appear for multiple players.
+      const targetRegionCount = randomInt(
+        owners.length,
+        Math.min(regions.length, owners.length * 2)
+      );
+
+      const pickedRegionIds = new Set();
+      for (const owner of owners) {
+        const candidates = regionsByOwner.get(owner) || [];
+        if (!candidates.length) continue;
+        const r = candidates[randomInt(0, candidates.length - 1)];
+        pickedRegionIds.add(r.id);
+      }
+
+      let safety = 0;
+      while (pickedRegionIds.size < targetRegionCount && safety < 5000) {
+        safety += 1;
+        const owner = owners[randomInt(0, owners.length - 1)];
+        const candidates = regionsByOwner.get(owner) || [];
+        if (!candidates.length) continue;
+        const r = candidates[randomInt(0, candidates.length - 1)];
+        pickedRegionIds.add(r.id);
+      }
+
+      for (const regionId of pickedRegionIds) {
+        const region = regionById.get(regionId);
+        if (!region) continue;
+        // Start with a random number of factories (still capped by 10).
+        region.factories = randomInt(1, 10);
+      }
+    }
+
     function loadMap(mapId) {
       if (mapId === "random_unions") {
         GAME_MAPS.random_unions = generateRandomMapDefinition("random_unions", "random (with unions)", true);
@@ -3701,7 +3927,9 @@
       }
       const mapDef = GAME_MAPS[mapId];
       if (!mapDef) return;
-      mapDef.countries = Object.fromEntries(mapDef.countryOrder.map((countryId) => [countryId, COUNTRY_LIBRARY[countryId]]));
+      if (!mapDef.countries) {
+        mapDef.countries = Object.fromEntries(mapDef.countryOrder.map((countryId) => [countryId, COUNTRY_LIBRARY[countryId]]));
+      }
       if (!mapDef.neighbors || !mapDef.regionVertices || !mapDef.regionShapes) {
         const auto = buildVoronoiGeometry(mapDef.regionData, mapDef.outline || MAP_OUTLINE, mapDef.minCellArea || 300);
         mapDef.neighbors = auto.neighbors;
@@ -3719,6 +3947,9 @@
       regionVertices = structuredClone(mapDef.regionVertices);
       regionShapes = structuredClone(mapDef.regionShapes);
       regions = structuredClone(mapDef.regionData);
+      for (const region of regions) region.factories = region.factories || 0;
+      if (factoriesEnabled) populateRandomFactoriesOnCurrentMap();
+      else clearFactoriesOnCurrentMap();
 
       const alive = getAlivePlayers();
       while (turnIndex < turnOrder.length && !alive.has(turnOrder[turnIndex])) {
@@ -3731,6 +3962,7 @@
       winner = null;
       isPassPhase = false;
       playersWhoFinishedAtLeastOneTurn.clear();
+      turnsCompletedByCountry.clear();
       blockedMoveSources = new Set();
       pendingReinforcement = null;
       reinforcementDrag = false;
@@ -3750,6 +3982,9 @@
         old.remove();
       }
       for (const old of mapEl.querySelectorAll(".capital-star")) {
+        old.remove();
+      }
+      for (const old of mapEl.querySelectorAll(".factory-icon")) {
         old.remove();
       }
 
@@ -3844,6 +4079,35 @@
           star.style.left = `${safeStar.x}px`;
           star.style.top = `${safeStar.y}px`;
           mapEl.appendChild(star);
+        }
+
+        if (region.factories > 0) {
+          const factoryOffsets = [
+            [18, -18],
+            [-18, -18],
+            [18, 18],
+            [-18, 18],
+            [0, -26],
+            [0, 26]
+          ];
+          let fx = safeCenter.x;
+          let fy = safeCenter.y;
+          for (const [dx, dy] of factoryOffsets) {
+            const tx = center.x + dx;
+            const ty = center.y + dy;
+            if (pointInPolygon(tx, ty, regionShapes[region.id])) {
+              fx = tx;
+              fy = ty;
+              break;
+            }
+          }
+          const safeFactory = findSafePointInsideRegion(regionShapes[region.id], fx, fy);
+          const icon = document.createElement("div");
+          icon.className = "factory-icon";
+          icon.style.left = `${safeFactory.x}px`;
+          icon.style.top = `${safeFactory.y}px`;
+          icon.innerHTML = `<div class="factory-gear">⚙</div><div class="factory-count">${region.factories}</div>`;
+          mapEl.appendChild(icon);
         }
       }
     }
@@ -3952,16 +4216,34 @@
       }
     }
 
-    function placePendingReinforcement(targetRegion) {
-      targetRegion.army += pendingReinforcement.units;
-      addLog(
-        `${getCountry(currentPlayer).name}: reinforcement of ${pendingReinforcement.units} units added to ${targetRegion.id}.`
+    async function allocatePendingReinforcement(targetRegion) {
+      if (!pendingReinforcement) return;
+      const remaining = pendingReinforcement.remainingUnits;
+      if (!Number.isInteger(remaining) || remaining <= 0) return;
+      if (targetRegion.owner !== currentPlayer) return;
+
+      const unitsToPlace = await showUnitsPrompt(
+        "How many reinforcement units should be placed here?",
+        remaining
       );
-      pendingReinforcement = null;
-      reinforcementTokenEl.style.display = "none";
-      reinforcementTokenEl.classList.remove("dragging");
-      reinforcementDrag = false;
-      reinforcementPointerId = null;
+      if (unitsToPlace == null) return;
+
+      targetRegion.army += unitsToPlace;
+      pendingReinforcement.remainingUnits -= unitsToPlace;
+
+      addLog(`${getCountry(currentPlayer).name}: placed ${unitsToPlace} reinforcement units into ${targetRegion.id}.`);
+
+      if (pendingReinforcement.remainingUnits <= 0) {
+        pendingReinforcement = null;
+        reinforcementTokenEl.style.display = "none";
+        reinforcementTokenEl.classList.remove("dragging");
+        reinforcementDrag = false;
+        reinforcementPointerId = null;
+      } else {
+        reinforcementTokenEl.textContent = `+${pendingReinforcement.remainingUnits}`;
+        reinforcementTokenEl.style.display = "flex";
+      }
+
       render();
     }
 
@@ -3974,9 +4256,82 @@
           addLog("Reinforcements can only be deployed to your region.");
           return;
         }
-        placePendingReinforcement(clicked);
+        await allocatePendingReinforcement(clicked);
         return;
       }
+
+      if (pendingDiplomacyAction) {
+        if (clicked.owner === currentPlayer) {
+          addLog("You cannot make or break an alliance with your own country.");
+          return;
+        }
+
+        if (pendingDiplomacyAction === "form") {
+          formAlliance(currentPlayer, clicked.owner);
+          addLog(`${getCountry(currentPlayer).name} formed an alliance with ${getCountry(clicked.owner).name}.`);
+        } else if (pendingDiplomacyAction === "break") {
+          breakAlliance(currentPlayer, clicked.owner);
+          addLog(`${getCountry(currentPlayer).name} broke alliance with ${getCountry(clicked.owner).name}.`);
+        }
+
+        pendingDiplomacyAction = null;
+        selectedRegionId = null;
+        checkWinner();
+        render();
+        return;
+      }
+
+      if (pendingFactoryAction) {
+        if (clicked.owner !== currentPlayer) {
+          addLog("Factories can only be managed in your own regions.");
+          return;
+        }
+
+        if (pendingFactoryAction === "build") {
+          const completedTurns = turnsCompletedByCountry.get(currentPlayer) || 0;
+          if (!factoriesEnabled) {
+            addLog("Factories mode is disabled.");
+            return;
+          }
+          if (completedTurns < 1) {
+            addLog("You can build factories starting from your 2nd turn.");
+            return;
+          }
+          const maxBuild = Math.min(clicked.army, 10 - (clicked.factories || 0));
+          if (maxBuild < 1) {
+            addLog("You cannot build more factories in this region.");
+            return;
+          }
+          const toBuild = await showUnitsPrompt("How many factories should be built?", maxBuild);
+          if (toBuild == null) return;
+          clicked.army -= toBuild;
+          clicked.factories = (clicked.factories || 0) + toBuild;
+          addLog(`${getCountry(currentPlayer).name} built ${toBuild} factories in ${clicked.id}.`);
+        }
+
+        if (pendingFactoryAction === "demolish") {
+          if (!factoriesEnabled) {
+            addLog("Factories mode is disabled.");
+            return;
+          }
+          const maxDemolish = clicked.factories || 0;
+          if (maxDemolish < 1) {
+            addLog("There are no factories to demolish in this region.");
+            return;
+          }
+          const toDemolish = await showUnitsPrompt("How many factories should be demolished?", maxDemolish);
+          if (toDemolish == null) return;
+          clicked.factories = (clicked.factories || 0) - toDemolish;
+          clicked.army += toDemolish;
+          addLog(`${getCountry(currentPlayer).name} demolished ${toDemolish} factories in ${clicked.id}.`);
+        }
+
+        pendingFactoryAction = null;
+        selectedRegionId = null;
+        render();
+        return;
+      }
+
       if (!selectedRegionId) {
         if (clicked.owner !== currentPlayer) {
           addLog("First, select your country's region.");
@@ -4023,17 +4378,29 @@
       const owned = regions.filter((r) => r.owner === currentPlayer);
       if (!owned.length) return;
 
-      const reinforcements = owned.reduce((sum, region) => sum + (region.capital ? 2 : 1), 0);
-      pendingReinforcement = { units: reinforcements };
-      reinforcementTokenEl.textContent = `+${reinforcements}`;
+      const normalReinforcements = owned.reduce((sum, region) => sum + (region.capital ? 2 : 1), 0);
+      const completedTurns = turnsCompletedByCountry.get(currentPlayer) || 0;
+
+      // Factories produce extra units only after the player has completed at least 2 turns.
+      const factoryBonusUnits =
+        factoriesEnabled && completedTurns >= 2 ? owned.reduce((sum, region) => sum + (region.factories || 0), 0) : 0;
+
+      const total = normalReinforcements + factoryBonusUnits;
+      if (total <= 0) return;
+
+      pendingReinforcement = { remainingUnits: total };
+      reinforcementTokenEl.textContent = `+${total}`;
       reinforcementTokenEl.style.display = "flex";
       reinforcementTokenEl.style.left = "270px";
       reinforcementTokenEl.style.top = "330px";
-      addLog(`${getCountry(currentPlayer).name}: drag +${reinforcements} to one of your regions.`);
+
+      addLog(
+        `${getCountry(currentPlayer).name}: distribute +${total} reinforcement units across your regions (you can split them).`
+      );
     }
 
     document.getElementById("moveModeBtn").addEventListener("click", () => {
-      if (isPassPhase || pendingReinforcement) return;
+      if (isPassPhase || pendingReinforcement || pendingDiplomacyAction || pendingFactoryAction) return;
       mode = "move";
       selectedRegionId = null;
       addLog("The movement mode has been selected.");
@@ -4041,7 +4408,7 @@
     });
 
     document.getElementById("attackModeBtn").addEventListener("click", () => {
-      if (isPassPhase || pendingReinforcement) return;
+      if (isPassPhase || pendingReinforcement || pendingDiplomacyAction || pendingFactoryAction) return;
       mode = "attack";
       selectedRegionId = null;
       addLog("Attack mode has been selected.");
@@ -4049,23 +4416,90 @@
     });
 
     document.getElementById("truceBtn").addEventListener("click", () => {
-      if (isPassPhase || pendingReinforcement) return;
+      if (isPassPhase || pendingReinforcement || pendingDiplomacyAction || pendingFactoryAction) return;
       atWar = false;
       addLog(`${getCountry(currentPlayer).name} concluded a truce.`);
       render();
     });
 
     document.getElementById("warBtn").addEventListener("click", () => {
-      if (isPassPhase || pendingReinforcement) return;
+      if (isPassPhase || pendingReinforcement || pendingDiplomacyAction || pendingFactoryAction) return;
       atWar = true;
       addLog(`${getCountry(currentPlayer).name} declared war.`);
       render();
     });
 
-    document.getElementById("endTurnBtn").addEventListener("click", () => {
+    formAllianceBtn.addEventListener("click", () => {
+      if (winner || isPassPhase || pendingReinforcement || pendingFactoryAction) return;
+      pendingDiplomacyAction = "form";
+      pendingFactoryAction = null;
+      selectedRegionId = null;
+      addLog("Alliance: click a region from another country to form an alliance.");
+    });
+
+    breakAllianceBtn.addEventListener("click", () => {
+      if (winner || isPassPhase || pendingReinforcement || pendingFactoryAction) return;
+      pendingDiplomacyAction = "break";
+      pendingFactoryAction = null;
+      selectedRegionId = null;
+      addLog("Alliance: click a region from another country to break an alliance.");
+    });
+
+    factoriesToggleBtn.addEventListener("click", () => {
       if (winner || isPassPhase || pendingReinforcement) return;
+      if (pendingDiplomacyAction) pendingDiplomacyAction = null;
+      if (pendingFactoryAction) pendingFactoryAction = null;
+
+      factoriesEnabled = !factoriesEnabled;
+      factoriesToggleBtn.textContent = `Factories: ${factoriesEnabled ? "on" : "off"}`;
+      buildFactoryBtn.disabled = !factoriesEnabled;
+      demolishFactoryBtn.disabled = !factoriesEnabled;
+
+      if (factoriesEnabled) populateRandomFactoriesOnCurrentMap();
+      else clearFactoriesOnCurrentMap();
+
+      addLog(`Factories mode is now ${factoriesEnabled ? "on" : "off"}.`);
+      render();
+    });
+
+    buildFactoryBtn.addEventListener("click", () => {
+      if (winner || isPassPhase || pendingReinforcement) return;
+      if (!factoriesEnabled) {
+        addLog("Factories mode is disabled.");
+        return;
+      }
+      if ((turnsCompletedByCountry.get(currentPlayer) || 0) < 1) {
+        addLog("You can build factories starting from your 2nd turn.");
+        return;
+      }
+      pendingDiplomacyAction = null;
+      pendingFactoryAction = "build";
+      selectedRegionId = null;
+      addLog("Factories: click one of your regions to build factories.");
+      render();
+    });
+
+    demolishFactoryBtn.addEventListener("click", () => {
+      if (winner || isPassPhase || pendingReinforcement) return;
+      if (!factoriesEnabled) {
+        addLog("Factories mode is disabled.");
+        return;
+      }
+      pendingDiplomacyAction = null;
+      pendingFactoryAction = "demolish";
+      selectedRegionId = null;
+      addLog("Factories: click one of your regions to demolish factories.");
+      render();
+    });
+
+    document.getElementById("endTurnBtn").addEventListener("click", () => {
+      if (winner || isPassPhase || pendingReinforcement || pendingDiplomacyAction || pendingFactoryAction) return;
       selectedRegionId = null;
       playersWhoFinishedAtLeastOneTurn.add(currentPlayer);
+      turnsCompletedByCountry.set(
+        currentPlayer,
+        (turnsCompletedByCountry.get(currentPlayer) || 0) + 1
+      );
       switchPlayer();
       if (!getAlivePlayers().has(currentPlayer)) {
         checkWinner();
@@ -4073,7 +4507,7 @@
         return;
       }
       blockedMoveSources = new Set();
-      addLog(`Ход переходит: ${getCountry(currentPlayer).name}.`);
+      addLog(`Turn passes to ${getCountry(currentPlayer).name}.`);
       render();
       showPassOverlay();
     });
@@ -4093,7 +4527,7 @@
       placeReinforcementTokenFromClient(event.clientX, event.clientY);
       event.preventDefault();
     });
-    document.addEventListener("pointerup", (event) => {
+    document.addEventListener("pointerup", async (event) => {
       if (!reinforcementDrag || !pendingReinforcement) return;
       if (reinforcementPointerId !== null && event.pointerId !== reinforcementPointerId) return;
       reinforcementDrag = false;
@@ -4101,7 +4535,7 @@
       reinforcementTokenEl.classList.remove("dragging");
       const regionId = getRegionIdAtClientPoint(event.clientX, event.clientY);
       if (!regionId) {
-        addLog("No reinforcements have been deployed: place a marker in your country's region.");
+        addLog("No region selected: place the reinforcement token onto one of your regions.");
         return;
       }
       const target = getRegion(regionId);
@@ -4109,7 +4543,7 @@
         addLog("Reinforcements can only be deployed to your region.");
         return;
       }
-      placePendingReinforcement(target);
+      await allocatePendingReinforcement(target);
     });
     document.addEventListener("pointercancel", () => {
       if (!reinforcementDrag) return;
